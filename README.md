@@ -110,22 +110,6 @@ After running the pipeline, artifacts are saved to:
 
 ---
 
-## Key Results (fill these from your outputs)
-
-Update these bullets using:
-- `reports/tables/sentiment_by_airline.csv`
-- the saved plots in `reports/figures/`
-
-Example (replace with your real numbers):
-- Avg sentiment by airline: Emirates = **X.XXX**, Qatar = **X.XXX**, Etihad = **X.XXX**
-- Emirates sentiment trends: (brief 1–2 line interpretation)
-- Topic modeling themes:
-  - Pain points: (top 2–3 topics)
-  - Praise themes: (top 2–3 topics)
-- Campaign context: sponsorship/event dates align with **spikes in public search interest** (exploratory correlation).
-
----
-
 ## Repo Structure
 
 ```txt
