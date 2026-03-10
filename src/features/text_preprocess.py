@@ -6,36 +6,32 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
-from ..utils.nltk_setup import ensure_nltk
+from utils.nltk_setup import ensure_nltk
+
+# Run once at import time — not once per row
+ensure_nltk()
+_STOP_WORDS: set[str] = set(stopwords.words("english"))
+_LEMMATIZER = WordNetLemmatizer()
+
 
 def preprocess_text(text: object, stop_words: set[str] | None = None) -> str:
-    """Clean + preprocess a single review.
-    Steps:
-      1) lowercase
-      2) remove punctuation/numbers
-      3) tokenize
-      4) remove stopwords
-      5) lemmatize
-    """
-    ensure_nltk()
+    """Clean + preprocess a single review."""
     if stop_words is None:
-        stop_words = set(stopwords.words("english"))
+        stop_words = _STOP_WORDS
 
     if not isinstance(text, str):
         return ""
-
-    lemmatizer = WordNetLemmatizer()
 
     t = text.lower()
     t = re.sub(r"[^a-z\s]", "", t)
     tokens = word_tokenize(t)
 
-    clean_tokens: list[str] = []
-    for tok in tokens:
-        if tok not in stop_words:
-            clean_tokens.append(lemmatizer.lemmatize(tok))
+    return " ".join(
+        _LEMMATIZER.lemmatize(tok)
+        for tok in tokens
+        if tok not in stop_words
+    )
 
-    return " ".join(clean_tokens)
 
 def add_clean_text(
     df: pd.DataFrame,

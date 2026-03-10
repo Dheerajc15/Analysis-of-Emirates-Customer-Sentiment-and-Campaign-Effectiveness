@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 import pandas as pd
-from ..config import TARGET_AIRLINES
-from ..utils.logging import get_logger
+from config import TARGET_AIRLINES
+from utils.logging import get_logger
 
 LOGGER = get_logger(__name__)
 

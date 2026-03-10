@@ -4,15 +4,15 @@ from dataclasses import dataclass
 from pathlib import Path
 import pandas as pd
 
-from .config import PATHS, TARGET_AIRLINES, get_news_api_key
-from .data.load import load_reviews, filter_airlines, split_emirates
-from .data.events import load_sponsorship_events
-from .features.text_preprocess import add_clean_text
-from .models.sentiment import add_vader_sentiment, average_sentiment_by_airline
-from .models.topic_model import split_by_overall_score, run_lda_topics
-from .external.trends import fetch_google_trends
-from .external.news import fetch_news_sentiment
-from .viz.plots import (
+from config import PATHS, TARGET_AIRLINES, get_news_api_key
+from data.load import load_reviews, filter_airlines, split_emirates
+from data.events import load_sponsorship_events
+from features.text_preprocess import add_clean_text
+from models.sentiment import add_vader_sentiment, average_sentiment_by_airline
+from models.topic_model import split_by_overall_score, run_lda_topics
+from external.trends import fetch_google_trends
+from external.news import fetch_news_sentiment
+from viz.plots import (
     plot_sentiment_distribution,
     plot_service_ratings,
     plot_sentiment_over_time,

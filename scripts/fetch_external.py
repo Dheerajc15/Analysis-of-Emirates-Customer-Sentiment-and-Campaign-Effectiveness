@@ -4,8 +4,8 @@ import argparse
 from pathlib import Path
 import pandas as pd
 
-from emirates_sentiment.pipeline import run_external_signals
-from emirates_sentiment.config import PATHS
+from pipeline import run_external_signals
+from config import PATHS
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch external signals (Google Trends + News sentiment).")

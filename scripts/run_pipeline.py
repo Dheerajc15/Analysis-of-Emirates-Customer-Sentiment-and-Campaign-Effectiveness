@@ -4,8 +4,8 @@ import argparse
 from pathlib import Path
 import pandas as pd
 
-from emirates_sentiment.pipeline import run_review_pipeline, save_tables, make_figures
-from emirates_sentiment.config import PATHS
+from pipeline import run_review_pipeline, save_tables, make_figures
+from config import PATHS
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Emirates sentiment review pipeline.")

@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from ..config import RATING_COLS
+from config import RATING_COLS
 
 def plot_sentiment_distribution(df_rivals: pd.DataFrame, out_path: str | Path | None = None) -> None:
     plt.figure(figsize=(8, 6))
