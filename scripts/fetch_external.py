@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-import argparse
+import sys
 from pathlib import Path
-import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import argparse
 from pipeline import run_external_signals
 from config import PATHS
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch external signals (Google Trends + News sentiment).")

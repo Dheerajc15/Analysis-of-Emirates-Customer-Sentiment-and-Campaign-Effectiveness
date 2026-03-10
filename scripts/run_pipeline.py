@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-import argparse
+import sys
 from pathlib import Path
-import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import argparse
 from pipeline import run_review_pipeline, save_tables, make_figures
 from config import PATHS
 
@@ -17,9 +19,9 @@ def main() -> None:
     make_figures(outputs)
 
     print("\nSaved outputs:")
-    print(f"- {PATHS.data_processed/'rivals_scored.csv'}")
-    print(f"- {PATHS.data_processed/'emirates_scored.csv'}")
-    print(f"- {PATHS.reports_tables/'sentiment_by_airline.csv'}")
+    print(f"- {PATHS.data_processed / 'rivals_scored.csv'}")
+    print(f"- {PATHS.data_processed / 'emirates_scored.csv'}")
+    print(f"- {PATHS.reports_tables / 'sentiment_by_airline.csv'}")
     print(f"- figures in {PATHS.reports_figures}")
 
 if __name__ == "__main__":

@@ -23,7 +23,8 @@ def preprocess_text(text: object, stop_words: set[str] | None = None) -> str:
         return ""
 
     t = text.lower()
-    t = re.sub(r"[^a-z\s]", "", t)
+    t = re.sub(r"[^a-z0-9\s]", "", t)
+
     tokens = word_tokenize(t)
 
     return " ".join(
@@ -31,7 +32,6 @@ def preprocess_text(text: object, stop_words: set[str] | None = None) -> str:
         for tok in tokens
         if tok not in stop_words
     )
-
 
 def add_clean_text(
     df: pd.DataFrame,

@@ -24,6 +24,7 @@ def plot_sentiment_distribution(df_rivals: pd.DataFrame, out_path: str | Path | 
         out_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(out_path, bbox_inches="tight", dpi=150)
     plt.show()
+    plt.close()  
 
 def plot_service_ratings(df_rivals: pd.DataFrame, out_path: str | Path | None = None) -> pd.DataFrame:
     df = df_rivals.copy()
@@ -31,7 +32,14 @@ def plot_service_ratings(df_rivals: pd.DataFrame, out_path: str | Path | None = 
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    df_avg = df.groupby("AirlineName")[RATING_COLS].mean().reset_index()
+    available_cols = [col for col in RATING_COLS if col in df.columns]
+    if not available_cols:
+        raise ValueError(
+            "None of the expected rating columns were found in the DataFrame. "
+            f"Expected one or more of: {RATING_COLS}"
+        )
+
+    df_avg = df.groupby("AirlineName")[available_cols].mean().reset_index()  
     df_melted = df_avg.melt(
         id_vars="AirlineName",
         var_name="ServiceCategory",
@@ -53,7 +61,9 @@ def plot_service_ratings(df_rivals: pd.DataFrame, out_path: str | Path | None = 
         out_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(out_path, bbox_inches="tight", dpi=150)
     plt.show()
+    plt.close()  
     return df_avg
+
 
 def plot_sentiment_over_time(df_rivals: pd.DataFrame, out_path: str | Path | None = None) -> pd.DataFrame:
     df = df_rivals.copy()
@@ -80,27 +90,52 @@ def plot_sentiment_over_time(df_rivals: pd.DataFrame, out_path: str | Path | Non
         out_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(out_path, bbox_inches="tight", dpi=150)
     plt.show()
+    plt.close()  
     return df_time
 
-def plot_trends_with_events(trends_df: pd.DataFrame, events_df: pd.DataFrame, out_path: str | Path | None = None) -> None:
+
+def plot_trends_with_events(
+    trends_df: pd.DataFrame,
+    events_df: pd.DataFrame,
+    out_path: str | Path | None = None,
+) -> None:
     fig, ax = plt.subplots(figsize=(11, 7))
     ax.set_xlabel("Date")
     ax.set_ylabel("Google Search Interest")
+
     if "Emirates" in trends_df.columns:
         emir_col = "Emirates"
         qatar_col = "Qatar Airways" if "Qatar Airways" in trends_df.columns else None
     else:
-        # if renamed columns
-        emir_col = "Emirates_Interest" if "Emirates_Interest" in trends_df.columns else trends_df.columns[0]
-        qatar_col = "Qatar_Interest" if "Qatar_Interest" in trends_df.columns else (trends_df.columns[1] if len(trends_df.columns)>1 else None)
+        # handle renamed columns
+        emir_col = (
+            "Emirates_Interest"
+            if "Emirates_Interest" in trends_df.columns
+            else trends_df.columns[0]
+        )
+        qatar_col = (
+            "Qatar_Interest"
+            if "Qatar_Interest" in trends_df.columns
+            else (trends_df.columns[1] if len(trends_df.columns) > 1 else None)
+        )
 
     ax.plot(trends_df.index, trends_df[emir_col], label="Emirates Search Interest")
     if qatar_col:
         ax.plot(trends_df.index, trends_df[qatar_col], linestyle=":", label="Control Interest")
 
+    fig.canvas.draw()
+
     for _, row in events_df.iterrows():
         ax.axvline(x=row["Date"], color="red", linestyle="--", linewidth=1.2)
-        ax.text(row["Date"], ax.get_ylim()[1] * 0.9, str(row["Event"]), rotation=90, ha="right", va="top", color="red")
+        ax.text(
+            row["Date"],
+            ax.get_ylim()[1] * 0.9,  
+            str(row["Event"]),
+            rotation=90,
+            ha="right",
+            va="top",
+            color="red",
+        )
 
     plt.title("Public Interest vs. Sponsorship Events", fontsize=16)
     plt.grid(True, linestyle="--", alpha=0.6)
@@ -111,3 +146,4 @@ def plot_trends_with_events(trends_df: pd.DataFrame, events_df: pd.DataFrame, ou
         out_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(out_path, bbox_inches="tight", dpi=150)
     plt.show()
+    plt.close()  

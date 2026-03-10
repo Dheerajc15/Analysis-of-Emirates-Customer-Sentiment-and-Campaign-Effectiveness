@@ -3,11 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import os
+from dotenv import load_dotenv  
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-from dotenv import load_dotenv
-load_dotenv(PROJECT_ROOT / ".env")
+load_dotenv(PROJECT_ROOT / ".env")  
 
 @dataclass(frozen=True)
 class Paths:

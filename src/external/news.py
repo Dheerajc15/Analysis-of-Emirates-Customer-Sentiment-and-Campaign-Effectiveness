@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
 from newsapi import NewsApiClient
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 

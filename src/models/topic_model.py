@@ -1,17 +1,10 @@
 from __future__ import annotations
-
-from dataclasses import dataclass
 from typing import Literal
 import pandas as pd
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 VectorizerKind = Literal["tfidf", "count"]
-
-@dataclass
-class TopicResult:
-    name: str
-    topics: list[str]
 
 def split_by_overall_score(
     df_emirates: pd.DataFrame,
@@ -33,6 +26,7 @@ def split_by_overall_score(
     pos = df[df[score_col] >= high_threshold].copy()
     return neg, pos
 
+
 def run_lda_topics(
     texts: pd.Series,
     n_topics: int = 5,
@@ -48,22 +42,29 @@ def run_lda_topics(
     if texts is None or len(texts) == 0:
         return []
 
+    safe_min_df = min(min_df, max(1, len(texts) // 2))
+
     if vectorizer == "count":
         vec = CountVectorizer(
             stop_words=stop_words,
             max_df=max_df,
-            min_df=min_df,
+            min_df=safe_min_df,  
             ngram_range=ngram_range,
         )
     else:
         vec = TfidfVectorizer(
             stop_words=stop_words,
             max_df=max_df,
-            min_df=min_df,
+            min_df=safe_min_df,   
             ngram_range=ngram_range,
         )
 
     X = vec.fit_transform(texts.astype(str))
+
+    # Guard against an empty vocabulary even after the min_df clamp
+    if X.shape[1] == 0:
+        return []
+
     lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state)
     lda.fit(X)
 
