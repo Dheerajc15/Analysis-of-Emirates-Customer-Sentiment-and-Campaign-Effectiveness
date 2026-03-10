@@ -46,7 +46,7 @@ def plot_service_ratings(df_rivals: pd.DataFrame, out_path: str | Path | None = 
         value_name="AverageRating",
     )
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 6))
     sns.barplot(x="ServiceCategory", y="AverageRating", hue="AirlineName", data=df_melted)
     plt.title("Comparative Analysis of Service Ratings", fontsize=16)
     plt.ylabel("Average Rating (1-5)")
@@ -79,7 +79,7 @@ def plot_sentiment_over_time(df_rivals: pd.DataFrame, out_path: str | Path | Non
     )
     df_time = df_time[df_time["DatePub"] > "2015-01-01"]
 
-    plt.figure(figsize=(11, 7))
+    plt.figure(figsize=(8, 6))
     sns.lineplot(x="DatePub", y="sentiment_score", hue="AirlineName", data=df_time, marker="o")
     plt.title("Average Customer Sentiment Over Time (Monthly)", fontsize=16)
     plt.ylabel("Average VADER Sentiment Score")
@@ -99,7 +99,7 @@ def plot_trends_with_events(
     events_df: pd.DataFrame,
     out_path: str | Path | None = None,
 ) -> None:
-    fig, ax = plt.subplots(figsize=(11, 7))
+    fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_xlabel("Date")
     ax.set_ylabel("Google Search Interest")
 
