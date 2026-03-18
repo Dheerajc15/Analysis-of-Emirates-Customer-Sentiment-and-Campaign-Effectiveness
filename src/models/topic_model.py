@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 VectorizerKind = Literal["tfidf", "count"]
 
+
 def split_by_overall_score(
     df_emirates: pd.DataFrame,
     score_col: str = "OverallScore",
@@ -35,10 +36,13 @@ def run_lda_topics(
     max_df: float = 0.9,
     min_df: int = 5,
     vectorizer: VectorizerKind = "tfidf",
-    ngram_range: tuple[int, int] = (1, 1),
+    ngram_range: tuple[int, int] = (1, 2),
     random_state: int = 42,
-) -> list[str]:
-    """Fit LDA and return list of topic strings (top words)."""
+) -> list[dict]:
+    """
+    Fit LDA and return list of dicts:
+      [{'topic_id': 0, 'label': 'topic_0', 'top_words': 'word1 word2 ...', 'weight': float}, ...]
+    """
     if texts is None or len(texts) == 0:
         return []
 
@@ -48,29 +52,39 @@ def run_lda_topics(
         vec = CountVectorizer(
             stop_words=stop_words,
             max_df=max_df,
-            min_df=safe_min_df,  
+            min_df=safe_min_df,
             ngram_range=ngram_range,
         )
     else:
         vec = TfidfVectorizer(
             stop_words=stop_words,
             max_df=max_df,
-            min_df=safe_min_df,   
+            min_df=safe_min_df,
             ngram_range=ngram_range,
         )
 
     X = vec.fit_transform(texts.astype(str))
 
-    # Guard against an empty vocabulary even after the min_df clamp
     if X.shape[1] == 0:
         return []
 
-    lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state)
+    lda = LatentDirichletAllocation(
+        n_components=n_topics, random_state=random_state
+    )
     lda.fit(X)
 
     feature_names = vec.get_feature_names_out()
-    topics: list[str] = []
-    for comp in lda.components_:
-        top_idx = comp.argsort()[:-n_words - 1:-1]
-        topics.append(" ".join(feature_names[i] for i in top_idx))
+    topics: list[dict] = []
+    for idx, comp in enumerate(lda.components_):
+        top_idx = comp.argsort()[: -n_words - 1 : -1]
+        top_words = " ".join(feature_names[i] for i in top_idx)
+        weight = comp[top_idx].sum()
+        topics.append(
+            {
+                "topic_id": idx,
+                "label": f"topic_{idx}",
+                "top_words": top_words,
+                "weight": round(float(weight), 2),
+            }
+        )
     return topics

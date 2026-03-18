@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
-from utils.nltk_setup import ensure_nltk  
+from utils.nltk_setup import ensure_nltk
 
 ensure_nltk()
 _STOP_WORDS: set[str] = set(stopwords.words("english"))
@@ -23,13 +23,10 @@ def preprocess_text(text: object, stop_words: set[str] | None = None) -> str:
 
     t = text.lower()
     t = re.sub(r"[^a-z0-9\s]", "", t)
-
     tokens = word_tokenize(t)
 
     return " ".join(
-        _LEMMATIZER.lemmatize(tok)
-        for tok in tokens
-        if tok not in stop_words
+        _LEMMATIZER.lemmatize(tok) for tok in tokens if tok not in stop_words
     )
 
 
@@ -38,6 +35,7 @@ def add_clean_text(
     text_col: str = "Review",
     out_col: str = "review_clean",
 ) -> pd.DataFrame:
+    """Add a cleaned text column to the DataFrame."""
     if text_col not in df.columns:
         raise KeyError(f"Expected column '{text_col}' not found.")
     df = df.copy()

@@ -19,6 +19,9 @@ data/processed/
 # Notebooks
 .ipynb_checkpoints/
 
+# HuggingFace model cache
+models_cache/
+
 # OS
 .DS_Store
 Thumbs.db
