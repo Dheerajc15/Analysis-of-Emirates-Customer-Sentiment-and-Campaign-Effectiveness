@@ -6,9 +6,8 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
-from utils.nltk_setup import ensure_nltk
+from utils.nltk_setup import ensure_nltk  
 
-# Run once at import time — not once per row
 ensure_nltk()
 _STOP_WORDS: set[str] = set(stopwords.words("english"))
 _LEMMATIZER = WordNetLemmatizer()
@@ -32,6 +31,7 @@ def preprocess_text(text: object, stop_words: set[str] | None = None) -> str:
         for tok in tokens
         if tok not in stop_words
     )
+
 
 def add_clean_text(
     df: pd.DataFrame,

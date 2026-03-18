@@ -9,6 +9,7 @@ import argparse
 from pipeline import run_review_pipeline, save_tables, make_figures
 from config import PATHS
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Emirates sentiment review pipeline.")
     parser.add_argument("--reviews", type=str, default=str(PATHS.data_raw / "AirlineReviews.csv"))

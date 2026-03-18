@@ -15,9 +15,9 @@ from external.news import fetch_news_sentiment
 from viz.plots import (
     plot_sentiment_distribution,
     plot_service_ratings,
-    plot_sentiment_over_time,
-    plot_trends_with_events,
+    plot_sentiment_over_time
 )
+
 
 @dataclass
 class PipelineOutputs:
@@ -33,7 +33,7 @@ class PipelineOutputs:
 def run_review_pipeline(reviews_csv: str | Path) -> PipelineOutputs:
     df = load_reviews(reviews_csv)
     df_rivals = filter_airlines(df, TARGET_AIRLINES)
-    df_rivals, df_emirates = split_emirates(df_rivals) 
+    df_rivals, df_emirates = split_emirates(df_rivals)
 
     df_rivals = add_clean_text(df_rivals, text_col="Review", out_col="review_clean")
     df_emirates = add_clean_text(df_emirates, text_col="Review", out_col="review_clean")
@@ -57,12 +57,12 @@ def run_review_pipeline(reviews_csv: str | Path) -> PipelineOutputs:
 
 
 def run_external_signals(
-    keywords: list[str] | None = None,  
+    keywords: list[str] | None = None,
     trends_timeframe: str = "today 12-m",
     news_query: str = "Emirates airline",
 ) -> tuple[pd.DataFrame, float]:
     if keywords is None:
-        keywords = ["Emirates", "Qatar Airways"]  # safe default created fresh each call
+        keywords = ["Emirates", "Qatar Airways"]  
 
     trends_df = fetch_google_trends(keywords, timeframe=trends_timeframe)
     api_key = get_news_api_key()
@@ -82,32 +82,24 @@ def save_tables(outputs: PipelineOutputs) -> None:
 
     outputs.df_rivals.to_csv(PATHS.data_processed / "rivals_scored.csv", index=False)
     outputs.df_emirates.to_csv(PATHS.data_processed / "emirates_scored.csv", index=False)
-    outputs.sentiment_by_airline.to_csv(PATHS.reports_tables / "sentiment_by_airline.csv", index=False)
+  
+    outputs.sentiment_by_airline.to_csv(
+        PATHS.reports_tables / "sentiment_by_airline.csv", index=False
+    )
 
 
 def make_figures(outputs: PipelineOutputs) -> None:
     PATHS.reports_figures.mkdir(parents=True, exist_ok=True)
 
-    plot_sentiment_distribution(outputs.df_rivals, PATHS.reports_figures / "sentiment_distribution.png")
-    plot_service_ratings(outputs.df_rivals, PATHS.reports_figures / "service_ratings.png")
-    plot_sentiment_over_time(outputs.df_rivals, PATHS.reports_figures / "sentiment_over_time.png")
-
-
-def make_event_overlay(
-    events_csv: str | Path,
-    keywords: list[str] | None = None,  
-    timeframe: str = "today 12-m",
-) -> None:
-    """Fetch trends and plot with sponsorship events overlay."""
-    if keywords is None:
-        keywords = ["Emirates", "Qatar Airways"]
-
-    events_df = load_sponsorship_events(events_csv)
-    trends_df = fetch_google_trends(keywords, timeframe=timeframe)
-    if trends_df.empty:
-        raise RuntimeError("Google Trends returned no data.")
-    if list(trends_df.columns) == list(keywords):
-        pass
-    else:
-        trends_df.columns = list(keywords)
-    plot_trends_with_events(trends_df, events_df, PATHS.reports_figures / "trends_with_events.png")
+    plot_sentiment_distribution(
+        outputs.df_rivals,
+        out_path=PATHS.reports_figures / "sentiment_distribution.png",
+    )
+    plot_service_ratings(
+        outputs.df_rivals,
+        out_path=PATHS.reports_figures / "service_ratings.png",
+    )
+    plot_sentiment_over_time(
+        outputs.df_rivals,
+        out_path=PATHS.reports_figures / "sentiment_over_time.png",
+    )
