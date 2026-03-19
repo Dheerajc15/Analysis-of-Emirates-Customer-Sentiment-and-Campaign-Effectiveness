@@ -17,6 +17,7 @@ class Paths:
     reports_figures: Path = PROJECT_ROOT / "reports" / "figures"
     reports_tables: Path = PROJECT_ROOT / "reports" / "tables"
     models_cache: Path = PROJECT_ROOT / "models_cache"
+    scraped_inputs: Path = PROJECT_ROOT / "data" / "scraped_inputs"
 
 
 PATHS = Paths()
@@ -42,4 +43,4 @@ SCRAPE_HEADERS = {
         "Chrome/120.0.0.0 Safari/537.36"
     )
 }
-SCRAPE_DELAY = (1, 3)  
+SCRAPE_DELAY = (1, 3)

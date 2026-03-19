@@ -1,50 +1,44 @@
-"""
-Scrape/compile the top-5 most frequent Emirates routes to and from DXB.
-Uses Wikipedia + publicly available route data.
-"""
 from __future__ import annotations
 
+import json
 import time
 import random
+from pathlib import Path
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from config import SCRAPE_HEADERS, SCRAPE_DELAY
+from config import SCRAPE_HEADERS, SCRAPE_DELAY, PATHS
 from utils.logging import get_logger
 
 LOGGER = get_logger(__name__)
 
-DXB_WIKI_URL = "https://en.wikipedia.org/wiki/Dubai_International_Airport"
 EMIRATES_DESTINATIONS_URL = "https://en.wikipedia.org/wiki/Emirates_(airline)_destinations"
 
 
 def scrape_top_routes_from_dxb() -> pd.DataFrame:
-    """
-    Scrape top Emirates routes to/from DXB.
-    Tries Wikipedia for route/destination data; falls back to curated data.
-    """
+
     LOGGER.info("Scraping Emirates route data...")
 
     destinations = _scrape_emirates_destinations()
 
     if destinations.empty:
-        LOGGER.info("Using curated top route data.")
-        return _curated_top_routes()
+        LOGGER.info("Wikipedia scrape returned no data. Using JSON fallback.")
+        return _fallback_routes_data()
 
     return destinations
 
 
 def _scrape_emirates_destinations() -> pd.DataFrame:
-    """Attempt to scrape Emirates destinations from Wikipedia."""
+    """Attempt to scrape Emirates destinations table from Wikipedia."""
     try:
         resp = requests.get(
             EMIRATES_DESTINATIONS_URL, headers=SCRAPE_HEADERS, timeout=15
         )
         resp.raise_for_status()
         time.sleep(random.uniform(*SCRAPE_DELAY))
-    except requests.RequestException as e:
-        LOGGER.warning("Could not fetch destinations page: %s", e)
+    except requests.RequestException as exc:
+        LOGGER.warning("Could not fetch destinations page: %s", exc)
         return pd.DataFrame()
 
     soup = BeautifulSoup(resp.text, "lxml")
@@ -59,8 +53,7 @@ def _scrape_emirates_destinations() -> pd.DataFrame:
             for tr in table.find_all("tr")[1:]:
                 cells = tr.find_all(["td", "th"])
                 if len(cells) >= 2:
-                    row = [cell.get_text(strip=True) for cell in cells]
-                    rows.append(row)
+                    rows.append([cell.get_text(strip=True) for cell in cells])
 
             if rows:
                 header_cells = table.find_all("tr")[0].find_all("th")
@@ -76,113 +69,22 @@ def _scrape_emirates_destinations() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def _curated_top_routes() -> pd.DataFrame:
+def _fallback_routes_data() -> pd.DataFrame:
     """
-    Top 5 most frequent Emirates routes to and from DXB (Dubai).
-    Based on publicly available flight frequency data (OAG, Flightradar24, Emirates timetable).
-    Data reflects high-frequency routes as of early 2026.
+    Load route fallback data from data/scraped_inputs/routes_fallback.json.
+    Edit that file to update or extend the fallback routes — no code changes needed.
     """
-    top_from_dxb = [
-        {
-            "rank": 1,
-            "route": "DXB → LHR (London Heathrow)",
-            "direction": "from DXB",
-            "daily_flights": 6,
-            "aircraft": "A380 / 777-300ER",
-            "distance_km": 5467,
-            "notes": "Highest frequency Emirates route globally",
-        },
-        {
-            "rank": 2,
-            "route": "DXB → BKK (Bangkok Suvarnabhumi)",
-            "direction": "from DXB",
-            "daily_flights": 4,
-            "aircraft": "A380 / 777-300ER",
-            "distance_km": 4924,
-            "notes": "Major Southeast Asia gateway",
-        },
-        {
-            "rank": 3,
-            "route": "DXB → SIN (Singapore Changi)",
-            "direction": "from DXB",
-            "daily_flights": 3,
-            "aircraft": "A380",
-            "distance_km": 5844,
-            "notes": "Key hub-to-hub route",
-        },
-        {
-            "rank": 4,
-            "route": "DXB → JFK (New York JFK)",
-            "direction": "from DXB",
-            "daily_flights": 3,
-            "aircraft": "A380",
-            "distance_km": 11023,
-            "notes": "Flagship US route",
-        },
-        {
-            "rank": 5,
-            "route": "DXB → BOM (Mumbai)",
-            "direction": "from DXB",
-            "daily_flights": 4,
-            "aircraft": "777-300ER",
-            "distance_km": 1928,
-            "notes": "Largest Indian market route",
-        },
-    ]
+    json_path: Path = PATHS.scraped_inputs / "routes_fallback.json"
 
-    top_to_dxb = [
-        {
-            "rank": 1,
-            "route": "LHR (London Heathrow) → DXB",
-            "direction": "to DXB",
-            "daily_flights": 6,
-            "aircraft": "A380 / 777-300ER",
-            "distance_km": 5467,
-            "notes": "Highest inbound frequency",
-        },
-        {
-            "rank": 2,
-            "route": "BOM (Mumbai) → DXB",
-            "direction": "to DXB",
-            "daily_flights": 4,
-            "aircraft": "777-300ER",
-            "distance_km": 1928,
-            "notes": "High demand expatriate corridor",
-        },
-        {
-            "rank": 3,
-            "route": "BKK (Bangkok) → DXB",
-            "direction": "to DXB",
-            "daily_flights": 4,
-            "aircraft": "A380 / 777-300ER",
-            "distance_km": 4924,
-            "notes": "Major tourism & business corridor",
-        },
-        {
-            "rank": 4,
-            "route": "SYD (Sydney) → DXB",
-            "direction": "to DXB",
-            "daily_flights": 3,
-            "aircraft": "A380",
-            "distance_km": 12045,
-            "notes": "Kangaroo route anchor",
-        },
-        {
-            "rank": 5,
-            "route": "JFK (New York) → DXB",
-            "direction": "to DXB",
-            "daily_flights": 3,
-            "aircraft": "A380",
-            "distance_km": 11023,
-            "notes": "Premium transatlantic demand",
-        },
-    ]
+    if not json_path.exists():
+        LOGGER.error("Routes fallback file not found: %s", json_path)
+        return pd.DataFrame()
 
-    from_df = pd.DataFrame(top_from_dxb)
-    to_df = pd.DataFrame(top_to_dxb)
-    combined = pd.concat([from_df, to_df], ignore_index=True)
-
-    LOGGER.info(
-        "Compiled %d top routes (5 from DXB + 5 to DXB)", len(combined)
-    )
-    return combined
+    try:
+        with json_path.open("r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        LOGGER.info("Loaded %d route records from %s", len(data), json_path.name)
+        return pd.DataFrame(data)
+    except (json.JSONDecodeError, OSError) as exc:
+        LOGGER.error("Failed to load routes fallback: %s", exc)
+        return pd.DataFrame()
