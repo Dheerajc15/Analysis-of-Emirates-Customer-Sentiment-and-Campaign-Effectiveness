@@ -60,10 +60,10 @@ def run_review_pipeline(reviews_csv: str | Path) -> PipelineOutputs:
     1. Load & filter reviews
     2. Preprocess text
     3. Score with VADER
-    4. Score with pre-trained transformer
-    5. Evaluate both models head-to-head
-    6. Use the better model for downstream analysis
-    7. Extract top-5 praises & complaints
+    4. Score with pre-trained transformer (RoBERTa)
+    5. Evaluate both models head-to-head → pick winner by weighted-F1
+    6. Assign the winning model's scores as canonical 'sentiment_label'
+    7. Extract top-N praises & complaints using the winning model's predictions
     """
     LOGGER.info("=" * 60)
     LOGGER.info("STEP 1: Loading and preprocessing reviews")
@@ -74,19 +74,19 @@ def run_review_pipeline(reviews_csv: str | Path) -> PipelineOutputs:
     df_rivals, df_emirates = split_emirates(df_rivals)
 
     # Text preprocessing
-    df_rivals = add_clean_text(df_rivals, text_col="Review", out_col="review_clean")
+    df_rivals  = add_clean_text(df_rivals,  text_col="Review", out_col="review_clean")
     df_emirates = add_clean_text(df_emirates, text_col="Review", out_col="review_clean")
 
     LOGGER.info("=" * 60)
     LOGGER.info("STEP 2: Sentiment scoring (VADER)")
     LOGGER.info("=" * 60)
-    df_rivals = add_vader_sentiment(df_rivals, text_col="review_clean", out_col="vader_score")
+    df_rivals  = add_vader_sentiment(df_rivals,  text_col="review_clean", out_col="vader_score")
     df_emirates = add_vader_sentiment(df_emirates, text_col="review_clean", out_col="vader_score")
 
     LOGGER.info("=" * 60)
     LOGGER.info("STEP 3: Sentiment scoring (Pre-trained RoBERTa)")
     LOGGER.info("=" * 60)
-    df_rivals = add_pretrained_sentiment(df_rivals, text_col="Review")
+    df_rivals  = add_pretrained_sentiment(df_rivals,  text_col="Review")
     df_emirates = add_pretrained_sentiment(df_emirates, text_col="Review")
 
     LOGGER.info("=" * 60)
@@ -95,16 +95,23 @@ def run_review_pipeline(reviews_csv: str | Path) -> PipelineOutputs:
     eval_results = evaluate_models(df_emirates)
     winner = eval_results["winner"]
 
-    # Assign the winning model's scores
-    df_rivals = assign_best_sentiment(df_rivals, winner)
+    # Assign the winning model's scores as the canonical sentiment columns.
+    # This writes 'sentiment_score' and 'sentiment_label' onto both DataFrames.
+    df_rivals  = assign_best_sentiment(df_rivals,  winner)
     df_emirates = assign_best_sentiment(df_emirates, winner)
 
-    # Competitive summary
+    # Competitive summary across all airlines
     sentiment_tbl = average_sentiment_by_airline(df_rivals)
 
     LOGGER.info("=" * 60)
-    LOGGER.info("STEP 5: Extracting top-5 praises & complaints")
+    LOGGER.info(
+        "STEP 5: Extracting top-5 praises & complaints "
+        "(using '%s' model's sentiment_label)",
+        winner.upper(),
+    )
     LOGGER.info("=" * 60)
+    # df_emirates now has 'sentiment_label' from the winning model — the
+    # praise_complaints module uses that column automatically.
     praise_df, complaint_df = extract_top_praises_and_complaints(df_emirates)
 
     return PipelineOutputs(
@@ -140,7 +147,7 @@ def run_scraping_pipeline() -> PipelineOutputs:
     LOGGER.info("=" * 60)
     LOGGER.info("SCRAPING STEP 2: Emirates Fleet Analysis")
     LOGGER.info("=" * 60)
-    outputs.fleet_df = scrape_emirates_fleet()
+    outputs.fleet_df    = scrape_emirates_fleet()
     outputs.fleet_summary = get_fleet_summary(outputs.fleet_df)
 
     LOGGER.info("=" * 60)
@@ -151,7 +158,7 @@ def run_scraping_pipeline() -> PipelineOutputs:
     return outputs
 
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════���══════════════════
 # SAVE & VISUALIZE
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -191,9 +198,9 @@ def make_figures(outputs: PipelineOutputs) -> None:
 
     # Sentiment plots
     if not outputs.df_rivals.empty:
-        plot_sentiment_distribution(outputs.df_rivals, out_path=fig / "sentiment_distribution.png")
-        plot_service_ratings(outputs.df_rivals, out_path=fig / "service_ratings.png")
-        plot_sentiment_over_time(outputs.df_rivals, out_path=fig / "sentiment_over_time.png")
+        plot_sentiment_distribution(outputs.df_rivals,  out_path=fig / "sentiment_distribution.png")
+        plot_service_ratings(outputs.df_rivals,          out_path=fig / "service_ratings.png")
+        plot_sentiment_over_time(outputs.df_rivals,      out_path=fig / "sentiment_over_time.png")
 
     # Model evaluation
     if outputs.eval_results:
@@ -201,7 +208,7 @@ def make_figures(outputs: PipelineOutputs) -> None:
 
     # Praises & Complaints
     if not outputs.praise_df.empty:
-        plot_top_praises(outputs.praise_df, out_path=fig / "top5_praises.png")
+        plot_top_praises(outputs.praise_df,       out_path=fig / "top5_praises.png")
     if not outputs.complaint_df.empty:
         plot_top_complaints(outputs.complaint_df, out_path=fig / "top5_complaints.png")
 
