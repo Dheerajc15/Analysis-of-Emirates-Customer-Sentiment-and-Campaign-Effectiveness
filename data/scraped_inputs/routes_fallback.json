@@ -1,0 +1,92 @@
+[
+  {
+    "rank": 1,
+    "route": "DXB → LHR (London Heathrow)",
+    "direction": "from DXB",
+    "daily_flights": 6,
+    "aircraft": "A380 / 777-300ER",
+    "distance_km": 5467,
+    "notes": "Highest frequency Emirates route globally"
+  },
+  {
+    "rank": 2,
+    "route": "DXB → BKK (Bangkok Suvarnabhumi)",
+    "direction": "from DXB",
+    "daily_flights": 4,
+    "aircraft": "A380 / 777-300ER",
+    "distance_km": 4924,
+    "notes": "Major Southeast Asia gateway"
+  },
+  {
+    "rank": 3,
+    "route": "DXB → SIN (Singapore Changi)",
+    "direction": "from DXB",
+    "daily_flights": 3,
+    "aircraft": "A380",
+    "distance_km": 5844,
+    "notes": "Key hub-to-hub route"
+  },
+  {
+    "rank": 4,
+    "route": "DXB → JFK (New York JFK)",
+    "direction": "from DXB",
+    "daily_flights": 3,
+    "aircraft": "A380",
+    "distance_km": 11023,
+    "notes": "Flagship US route"
+  },
+  {
+    "rank": 5,
+    "route": "DXB → BOM (Mumbai)",
+    "direction": "from DXB",
+    "daily_flights": 4,
+    "aircraft": "777-300ER",
+    "distance_km": 1928,
+    "notes": "Largest Indian market route"
+  },
+  {
+    "rank": 1,
+    "route": "LHR (London Heathrow) → DXB",
+    "direction": "to DXB",
+    "daily_flights": 6,
+    "aircraft": "A380 / 777-300ER",
+    "distance_km": 5467,
+    "notes": "Highest inbound frequency"
+  },
+  {
+    "rank": 2,
+    "route": "BOM (Mumbai) → DXB",
+    "direction": "to DXB",
+    "daily_flights": 4,
+    "aircraft": "777-300ER",
+    "distance_km": 1928,
+    "notes": "High demand expatriate corridor"
+  },
+  {
+    "rank": 3,
+    "route": "BKK (Bangkok) → DXB",
+    "direction": "to DXB",
+    "daily_flights": 4,
+    "aircraft": "A380 / 777-300ER",
+    "distance_km": 4924,
+    "notes": "Major tourism & business corridor"
+  },
+  {
+    "rank": 4,
+    "route": "SYD (Sydney) → DXB",
+    "direction": "to DXB",
+    "daily_flights": 3,
+    "aircraft": "A380",
+    "distance_km": 12045,
+    "notes": "Kangaroo route anchor"
+  },
+  {
+    "rank": 5,
+    "route": "JFK (New York) → DXB",
+    "direction": "to DXB",
+    "daily_flights": 3,
+    "aircraft": "A380",
+    "distance_km": 11023,
+    "notes": "Premium transatlantic demand"
+  }
+]

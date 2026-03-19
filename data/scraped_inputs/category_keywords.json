@@ -1,0 +1,26 @@
+{
+  "praise": {
+    "In-flight Entertainment": ["entertainment", "ife", "screen", "movie", "film", "tv", "wifi", "streaming"],
+    "Cabin Crew Service":       ["crew", "staff", "steward", "attendant", "cabin", "friendly", "helpful", "polite", "hospitable"],
+    "Seat Comfort":             ["seat", "comfort", "legroom", "spacious", "recline", "space", "bed", "flat", "suite"],
+    "Food & Beverage":          ["food", "meal", "drink", "wine", "dining", "catering", "menu", "breakfast", "lunch", "dinner", "cuisine"],
+    "Lounge Experience":        ["lounge", "business", "first", "class", "premium", "chauffeur", "spa"],
+    "On-time Performance":      ["time", "schedule", "punctual", "early", "ontime", "departure", "arrival"],
+    "Booking & Check-in":       ["booking", "check", "checkin", "online", "app", "website", "smooth", "easy"],
+    "Aircraft Quality":         ["aircraft", "plane", "a380", "boeing", "777", "new", "clean", "modern", "refurbished"],
+    "Value for Money":          ["value", "price", "worth", "money", "cheap", "affordable", "reasonable", "deal"],
+    "Overall Experience":       ["excellent", "amazing", "best", "great", "wonderful", "fantastic", "outstanding", "superb"]
+  },
+  "complaint": {
+    "Flight Delays & Cancellations": ["delay", "cancel", "late", "hour", "wait", "reschedule", "delayed", "postponed"],
+    "Baggage Issues":                ["baggage", "luggage", "bag", "lost", "damaged", "missing", "suitcase", "carousel"],
+    "Poor Customer Service":         ["rude", "unhelpful", "ignore", "worst", "terrible", "horrible", "complaint", "arrogant"],
+    "Seat Discomfort":               ["uncomfortable", "cramped", "narrow", "broken", "hard", "old", "worn"],
+    "Food Quality":                  ["cold", "tasteless", "bland", "stale", "inedible", "bad food", "poor food"],
+    "Refund & Compensation":         ["refund", "compensation", "voucher", "reimburse", "credit", "rebooking"],
+    "Transfer & Connection":         ["transfer", "connection", "transit", "missed", "layover", "connecting"],
+    "Cabin Cleanliness":             ["dirty", "unclean", "stain", "filthy", "hygiene", "smell", "odour"],
+    "Communication":                 ["communication", "inform", "update", "email", "response", "phone", "contact"],
+    "Value for Money":               ["overpriced", "expensive", "ripoff", "not worth", "overcharge"]
+  }
+}

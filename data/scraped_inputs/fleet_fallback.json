@@ -1,0 +1,58 @@
+[
+  {
+    "aircraft": "Airbus A380-800",
+    "in_service": 116,
+    "orders": 0,
+    "passengers": "489-615",
+    "configuration": "3-class / 2-class",
+    "notes": "World's largest A380 fleet operator"
+  },
+  {
+    "aircraft": "Boeing 777-300ER",
+    "in_service": 133,
+    "orders": 0,
+    "passengers": "354-428",
+    "configuration": "3-class / 2-class",
+    "notes": "Backbone of long-haul fleet"
+  },
+  {
+    "aircraft": "Boeing 777-200LR",
+    "in_service": 10,
+    "orders": 0,
+    "passengers": "266",
+    "configuration": "2-class",
+    "notes": "Ultra-long-range variant"
+  },
+  {
+    "aircraft": "Boeing 777-F",
+    "in_service": 11,
+    "orders": 0,
+    "passengers": "Cargo",
+    "configuration": "Freighter",
+    "notes": "Emirates SkyCargo dedicated"
+  },
+  {
+    "aircraft": "Boeing 777-9",
+    "in_service": 0,
+    "orders": 205,
+    "passengers": "~400 (est.)",
+    "configuration": "TBD",
+    "notes": "Largest 777X order globally; deliveries starting ~2026"
+  },
+  {
+    "aircraft": "Boeing 787-9 Dreamliner",
+    "in_service": 0,
+    "orders": 35,
+    "passengers": "~300 (est.)",
+    "configuration": "TBD",
+    "notes": "First Dreamliner order by Emirates (2024)"
+  },
+  {
+    "aircraft": "Airbus A350-900",
+    "in_service": 5,
+    "orders": 60,
+    "passengers": "312 (est.)",
+    "configuration": "3-class",
+    "notes": "New type for Emirates; deliveries began late 2024"
+  }
+]

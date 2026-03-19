@@ -12,7 +12,7 @@ venv/
 .env
 .env.*
 
-# Data (keep raw/processed out of git unless tiny)
+# Data (keep raw/processed out of git — they are large or auto-generated)
 data/raw/
 data/processed/
 
